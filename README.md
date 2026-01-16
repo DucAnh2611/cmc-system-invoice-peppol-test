@@ -77,7 +77,7 @@ public/
 1. **Clone the repository** (or extract the project):
 
 ```bash
-cd test-invoice
+cd cmc-system-invoice-peppol-test
 ```
 
 2. **Install dependencies**:
