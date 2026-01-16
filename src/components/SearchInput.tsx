@@ -36,8 +36,7 @@ export const SearchInput = ({
     }
   }, [debouncedValue, debounceDelay, onChange]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
+  const changeDebouncedValue = (newValue: string) => {
     setLocalValue(newValue);
 
     if (!debounceDelay) {
@@ -45,9 +44,13 @@ export const SearchInput = ({
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    changeDebouncedValue(newValue);
+  };
+
   const handleClear = () => {
-    setLocalValue('');
-    onChange('');
+    changeDebouncedValue('');
   };
 
   return (

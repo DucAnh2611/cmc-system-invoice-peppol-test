@@ -38,7 +38,6 @@ const PoMatchingActionBar = ({
   );
 
   const handleSearchChange = (search: TPoMatchingSearch) => {
-    onSearchChange(search);
     setSearchParams(search);
   };
 
@@ -47,7 +46,9 @@ const PoMatchingActionBar = ({
     const status = searchParams.get('status') ?? '';
 
     onSearchChange({ key, status });
-  }, [onSearchChange, searchParams]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   return (
     <div className="w-full h-fit p-5 flex justify-between items-center relative">
@@ -56,7 +57,6 @@ const PoMatchingActionBar = ({
           value={search.key}
           onChange={value => handleSearchChange({ ...search, key: value })}
           placeholder="Search invoices ..."
-          useDebounce={500}
         />
 
         <Dropdown

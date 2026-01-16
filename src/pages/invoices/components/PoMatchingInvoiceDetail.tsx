@@ -1,4 +1,4 @@
-import { FileDown, Mail, PencilLine, Trash } from 'lucide-react';
+import { FileDown, LoaderCircle, Mail, PencilLine, Trash } from 'lucide-react';
 import NotImplement from '../../../components/NotImplement';
 import type { Invoice } from '../../../types/invoice';
 import { generateMockTable } from '../../../data/mockInvoices';
@@ -78,7 +78,15 @@ const PoMatchingInvoiceDetail = ({ invoice }: PoMatchingInvoiceDetailProps) => {
     <div className="w-full h-full flex bg-white">
       <div className="flex-1 flex flex-col gap-4 p-8 overflow-y-auto">
         <div className="flex flex-col gap-8">
-          <Suspend loading={loadingInvoiceData} element={<div>Loading invoice data...</div>}>
+          <Suspend
+            loading={loadingInvoiceData}
+            element={
+              <div className="w-full h-full flex items-center justify-center gap-2 bg-gray-100 rounded-md p-3">
+                <LoaderCircle size={16} className="text-gray-500 animate-spin" />
+                <p className="text-gray-500 text-sm">Loading invoice data...</p>
+              </div>
+            }
+          >
             <InvoiceDetailTable
               title="Invoice data"
               actionBar={
@@ -101,7 +109,15 @@ const PoMatchingInvoiceDetail = ({ invoice }: PoMatchingInvoiceDetailProps) => {
               ]}
             />
           </Suspend>
-          <Suspend loading={loadingOrderData} element={<div>Loading order data...</div>}>
+          <Suspend
+            loading={loadingOrderData}
+            element={
+              <div className="w-full h-full flex items-center justify-center gap-2 bg-gray-100 rounded-md p-3">
+                <LoaderCircle size={16} className="text-gray-500 animate-spin" />
+                <p className="text-gray-500 text-sm">Loading order data...</p>
+              </div>
+            }
+          >
             <InvoiceDetailTable
               title="Order data"
               tables={[
