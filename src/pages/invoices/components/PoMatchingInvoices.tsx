@@ -1,81 +1,59 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { Invoice } from '../../../types/invoice';
-import type { TPoMatchingSearch } from './PoMatchingActionBar';
-import { generateMockInvoices } from '../../../data/mockInvoices';
 import { cn } from '../../../utils/cn';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, LoaderCircle } from 'lucide-react';
+import Suspend from '../../../components/Suspend';
 
 interface PoMatchingInvoicesProps {
-  search: TPoMatchingSearch;
+  loading: boolean;
+  invoices: InvoiceSection[];
   selectedInvoice: Invoice | null;
   onSelectInvoice: (invoice: Invoice | null) => void;
 }
 
-interface InvoiceSection {
+export interface InvoiceSection {
   id: string;
   name: string;
   items: number;
   invoices: Invoice[];
 }
-const mockInvoices = generateMockInvoices(20);
 
 const PoMatchingInvoices = ({
-  search,
+  loading,
+  invoices,
   onSelectInvoice,
   selectedInvoice,
 }: PoMatchingInvoicesProps) => {
-  const [invoices, setInvoices] = useState<InvoiceSection[]>([]);
-
-  const searchInvoices = (search: TPoMatchingSearch) => {
-    const filteredInvoices = mockInvoices.map(section => {
-      const filteredSectionInvoices = section.invoices.filter(invoice => {
-        const matchesKey =
-          search.key === '' ||
-          invoice.name.toLowerCase().includes(search.key.toLowerCase()) ||
-          invoice.businessCode.toLowerCase().includes(search.key.toLowerCase()) ||
-          invoice.code.toLowerCase().includes(search.key.toLowerCase());
-
-        const matchesStatus =
-          search.status === 'all' ||
-          search.status === '' ||
-          invoice.status.toLowerCase() === search.status.toLowerCase();
-
-        return matchesKey && matchesStatus;
-      });
-
-      return {
-        ...section,
-        items: filteredSectionInvoices.length,
-        invoices: filteredSectionInvoices,
-      };
-    });
-
-    setInvoices(filteredInvoices);
-  };
-
-  useEffect(() => {
-    searchInvoices(search);
-  }, [search]);
-
   return (
     <div
       className="w-[300px] h-full overflow-y-auto border-r border-gray-200 bg-white p-3 py-4 flex flex-col gap-3 relative shrink-0"
       role="navigation"
       aria-label="Invoice list"
     >
-      {invoices.length === 0 && (
-        <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-md p-3">
-          <p className="text-gray-500 text-sm">No invoices found</p>
-        </div>
-      )}
-      {invoices.map(invoice => (
-        <InvoiceSections
-          key={invoice.id}
-          section={invoice}
-          onSelectInvoice={onSelectInvoice}
-          selectedInvoice={selectedInvoice}
-        />
-      ))}
+      <Suspend
+        loading={loading}
+        element={
+          <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-md p-3">
+            <LoaderCircle size={16} className="text-gray-500 animate-spin" />
+            <p className="text-gray-500 text-sm">Loading...</p>
+          </div>
+        }
+      >
+        {invoices.length === 0 && (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-md p-3">
+            <p className="text-gray-500 text-sm">No invoices found</p>
+          </div>
+        )}
+
+        {invoices.map(invoice => (
+          <InvoiceSections
+            key={invoice.id}
+            section={invoice}
+            onSelectInvoice={onSelectInvoice}
+            selectedInvoice={selectedInvoice}
+          />
+        ))}
+      </Suspend>
     </div>
   );
 };
@@ -159,7 +137,7 @@ const InvoiceItem = ({ invoice, selectedInvoice, onSelectInvoice }: InvoiceItemP
       onClick={() => onSelectInvoice(isSelected ? null : invoice)}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           onSelectInvoice(isSelected ? null : invoice);
